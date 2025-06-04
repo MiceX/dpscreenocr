@@ -71,6 +71,7 @@ private:
     bool wasActiveLangs{};
     bool statusValid{};
 
+    std::optional<DpsoRect> lastNonEmptySelectionRect;
     QAction* visibilityAction;
     QAction* quitAction;
     bool quitRequested{};

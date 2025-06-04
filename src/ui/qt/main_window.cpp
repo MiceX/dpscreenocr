@@ -1199,13 +1199,23 @@ void MainWindow::checkHotkeyActions()
 
         setSelectionIsEnabled(false);
 
-        DpsoRect selectionRect;
-        dpsoSelectionGetGeometry(selection, &selectionRect);
-        if (dpsoRectIsEmpty(&selectionRect))
-            break;
+        DpsoRect currentSelectionRect;
+        dpsoSelectionGetGeometry(selection, &currentSelectionRect);
 
-        auto* screenshot = dpsoTakeScreenshot(
-            sys.get(), &selectionRect);
+        DpsoRect rectToUse;
+
+        if (dpsoRectIsEmpty(&currentSelectionRect)) {
+            if (lastNonEmptySelectionRect) {
+                rectToUse = *lastNonEmptySelectionRect;
+            } else {
+                break;
+            }
+        } else {
+            rectToUse = currentSelectionRect;
+            lastNonEmptySelectionRect = currentSelectionRect;
+        }
+
+        auto* screenshot = dpsoTakeScreenshot(sys.get(), &rectToUse);
         if (!screenshot) {
             QMessageBox::warning(
                 this,
